@@ -56,7 +56,7 @@ async function sendLoginMessage(message) {
   try {
     const channel = await client.channels.fetch(CHANNEL_ID);
     if (channel) {
-      await channel.send(message);
+      await channel.send(message);  
       console.log("Sent login message");
     } else {
       console.log("Channel not found");
