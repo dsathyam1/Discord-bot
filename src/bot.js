@@ -1,9 +1,9 @@
 const { Client, GatewayIntentBits } = require("discord.js");
 const { CHANNEL_ID, DISCORD_TOKEN } = require("./config");
 const { formatDate } = require("./utils");
-const { scheduleNotification } = require("./scheduler"); 
 require("dotenv").config();
-
+const fs = require("fs");
+const path = require("path");
 
 const client = new Client({
   intents: [
@@ -13,26 +13,44 @@ const client = new Client({
   ],
 });
 
+const commands = new Map();
+
+// Correct path to root commands folder
+const commandsPath = path.join(__dirname, "..", "commands");
+
+if (!fs.existsSync(commandsPath)) {
+  console.error("Commands folder not found! Please create a 'commands' folder in the root directory.");
+  process.exit(1);
+}
+
+// Read all .js files in the commands folder
+const commandFiles = fs.readdirSync(commandsPath);
+
+for (const file of commandFiles) {
+  if (file.endsWith(".js")) {
+    const cmd = require(path.join(commandsPath, file));
+    commands.set(cmd.name, cmd);
+  }
+}
+
 client.once("ready", async () => {
   console.log(`Discord bot logged in as ${client.user.tag}`);
   await sendLoginMessage(`Login alert at: ${formatDate()}`);
 });
 
-client.on("messageCreate",(msg)=>{
-  if(msg.author.bot) return 
+client.on("messageCreate", (msg) => {
+  if (msg.author.bot) return;
 
-  if(msg.content ==="!start"){
-    msg.reply('Hello, I am your personal bot'); 
+  const commandName = msg.content.split(" ")[0];
+  if (commands.has(commandName)) {
+    try {
+      commands.get(commandName).execute(msg);
+    } catch (err) {
+      console.error(err);
+      msg.reply(" Something went wrong running that command.");
+    }
   }
-
-  if(msg.content.startsWith("!remind")){
-    const reminderText = msg.content
-    .replace("!remind", "GET BACK TO YOUR WORK")
-    .trim(); 
-    msg.reply("Reminder set:"); 
-    scheduleNotification(msg.channel, reminderText, 10); 
-  }
-})
+});
 
 async function sendLoginMessage(message) {
   try {
@@ -49,9 +67,7 @@ async function sendLoginMessage(message) {
 }
 
 function startBot() {
-  client
-    .login(DISCORD_TOKEN)
-    .catch((err) => console.error("Failed to login:", err));
+  client.login(DISCORD_TOKEN).catch((err) => console.error("Failed to login:", err));
 }
 
 module.exports = { startBot, sendLoginMessage };
