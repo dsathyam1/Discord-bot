@@ -4,4 +4,12 @@ function cleanText(text) {
 function getTimeStamp() {
   return new Date().toLocaleString();
 }
-module.exports = {getTimeStamp, cleanText}; 
+
+function scheduleNotification(channel,text,delaySeconds){
+  setTimeout(() => {
+    channel.send(`${text}`)
+
+  }, delaySeconds*1000);
+
+}
+module.exports = {getTimeStamp, cleanText, scheduleNotification}; 
