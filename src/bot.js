@@ -19,11 +19,13 @@ const commands = new Map();
 const commandsPath = path.join(__dirname, "..", "commands");
 
 if (!fs.existsSync(commandsPath)) {
-  console.error("Commands folder not found! Please create a 'commands' folder in the root directory.");
+  console.error(
+    "Commands folder not found! Please create a 'commands' folder in the root directory."
+  );
   process.exit(1);
 }
 
-// Read all .js files in the commands folder
+// Read all .js files in the commands folder 
 const commandFiles = fs.readdirSync(commandsPath);
 
 for (const file of commandFiles) {
@@ -40,11 +42,12 @@ client.once("ready", async () => {
 
 client.on("messageCreate", (msg) => {
   if (msg.author.bot) return;
-
-  const commandName = msg.content.split(" ")[0];
+  const parts = msg.content.trim().split(/ +/)
+  const commandName = parts.shift(); 
+  const args = parts 
   if (commands.has(commandName)) {
     try {
-      commands.get(commandName).execute(msg);
+      commands.get(commandName).execute(msg, args);
     } catch (err) {
       console.error(err);
       msg.reply(" Something went wrong running that command.");
@@ -56,7 +59,7 @@ async function sendLoginMessage(message) {
   try {
     const channel = await client.channels.fetch(CHANNEL_ID);
     if (channel) {
-      await channel.send(message);  
+      await channel.send(message);
       console.log("Sent login message");
     } else {
       console.log("Channel not found");
@@ -67,7 +70,9 @@ async function sendLoginMessage(message) {
 }
 
 function startBot() {
-  client.login(DISCORD_TOKEN).catch((err) => console.error("Failed to login:", err));
+  client
+    .login(DISCORD_TOKEN)
+    .catch((err) => console.error("Failed to login:", err));
 }
 
 module.exports = { startBot, sendLoginMessage };
