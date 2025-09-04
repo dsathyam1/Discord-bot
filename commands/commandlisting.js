@@ -1,14 +1,39 @@
+const { EmbedBuilder } = require("discord.js");
+
 module.exports = {
   name: "!help",
-  description: "It will list all the commands of this bot",
+  description: "List all commands of this bot",
   execute(msg) {
-    msg.reply(
-      "`!start: Bot will introduce itself`\n" +
-        "`!whoisyou: Bot will tell you about itself`\n" +
-        "`!remind: Set a custom reminder with optional time`\n" +
-        "`!clear: Clears specific texts`\n" + 
-        "`!kick: Kicks specific member`\n" +
-        "`!ban: Bans specific member`"
-    );
+    const embed = new EmbedBuilder()
+      .setColor(0x5865f2)
+      .setTitle(" Smart Notifier Bot - Help Menu")
+      .setDescription("Here’s a list of all available commands:")
+      .addFields(
+        {
+          name: "General",
+          value: "`!start` - Introduce the bot\n`!whoisyou` - About the bot",
+          inline: false,
+        },
+        {
+          name: "Utility",
+          value: "`!remind` - Set a reminder\n`!clear` - Clear messages",
+          inline: false,
+        },
+        {
+          name: "Moderation",
+          value:
+            "`!kick @user` - Kick member\n`!ban @user` - Ban member\n`!mute @user` - Mute member\n`!unmute @user` - Unmute member",
+          inline: false,
+        },
+        {
+          name: "Profile",
+          value: "`!avatar @user` - Show user’s profile picture",
+          inline: false,
+        }
+      )
+      .setFooter({ text: "Use commands with the '!' prefix" })
+      .setTimestamp();
+
+    msg.channel.send({ embeds: [embed] });
   },
 };
