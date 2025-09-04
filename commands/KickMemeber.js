@@ -11,11 +11,15 @@ module.exports = {
 
     const user = msg.mentions.members.first();
     if (!user) {
-      return msg.reply(" You need to mention a member to kick. Example: `!kick @user`");
+      return msg.reply(
+        " You need to mention a member to kick. Example: `!kick @user`"
+      );
     }
 
     if (!user.kickable) {
-      return msg.reply("I cannot kick this member. They may have a higher role than me.");
+      return msg.reply(
+        "I cannot kick this member. They may have a higher role than me."
+      );
     }
 
     try {
