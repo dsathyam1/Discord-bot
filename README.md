@@ -19,8 +19,8 @@ A Discord bot that sends notifications when it comes online, built with Discord.
 
 1. **Clone or download this repository**
    ```bash
-   git clone <https://github.com/dsathyam1/Login-notifcation-bot>
-   cd "Login Notification bot"
+   git clone https://github.com/dsathyam1/Login-notifcation-bot
+   cd Login Notification bot
    ```
 
 2. **Install dependencies**
