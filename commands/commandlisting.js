@@ -7,7 +7,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor(0x5865f2)
       .setTitle(" Smart Notifier Bot - Help Menu")
-      .setDescription("Here’s a list of all available commands:")
+      .setDescription("Here is a list of all available commands:")
       .addFields(
         {
           name: "General",
@@ -19,6 +19,13 @@ module.exports = {
           value: "`!remind` - Set a reminder\n`!clear` - Clear messages",
           inline: false,
         },
+        {
+          name: "Translation",
+          value:
+            "`!translate` - Translate text to another language\n`!languages` - List all languages that can be translated",
+          inline: false,
+        },
+
         {
           name: "Moderation",
           value:
