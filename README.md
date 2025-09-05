@@ -1,17 +1,20 @@
 # Login Notification Bot
 
-A Discord bot that sends notifications when it comes online, built with Discord.js and Node.js.
+A Discord bot built with Discord.js (v14) and Node.js. It sends a notification when it comes online and supports a set of utility, moderation, profile, and translation commands via a simple text prefix.
 
 ## Features
 
-- **Automatic Login Notifications**: Sends a message to a specified Discord channel when the bot comes online
-- **Real-time Status Updates**: Provides console logging for bot status and message delivery
-- **Configurable**: Easy to configure channel ID and other settings via environment variables
-- **Windows Batch Support**: Includes a `.bat` file for easy Windows deployment
+- **Automatic login notification**: Sends a message to a specified channel on the `ready` event
+- **Text command framework**: Commands are auto-loaded from the root `commands` folder
+- **Utilities**: Reminders, clearing messages, server info, profile avatar
+- **Moderation**: Kick, ban, mute, unmute
+- **Translation**: Translate text and list supported languages
+- **Configurable**: Uses `.env` for `DISCORD_TOKEN` and `CHANNEL_ID`
+- **Windows batch support**: `startbot.bat` for quick startup on Windows
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (v16 or higher)
+- [Node.js](https://nodejs.org/) (v16.11+ recommended for Discord.js v14; v18+ is ideal)
 - [Discord Bot Token](https://discord.com/developers/applications)
 - Discord server with appropriate permissions
 
@@ -29,7 +32,7 @@ A Discord bot that sends notifications when it comes online, built with Discord.
    ```
 
 3. **Create environment configuration**
-   Create a `.env` file in the root directory with the following variables:
+   Create a `.env` file in the project root (same level as `package.json`) with:
    ```env
    DISCORD_TOKEN=your_discord_bot_token_here
    CHANNEL_ID=your_discord_channel_id_here
@@ -46,7 +49,8 @@ A Discord bot that sends notifications when it comes online, built with Discord.
 5. Enable the following intents:
    - Guilds
    - Guild Messages
-6. Invite the bot to your server with appropriate permissions
+   - Message Content
+6. Invite the bot to your server with appropriate permissions (Send Messages, Manage Messages for `!clear`, Manage Roles for `!mute`/`!unmute`, Kick Members, Ban Members as needed)
 
 ### Environment Variables
 
@@ -101,6 +105,33 @@ Then run:
 npm start
 ```
 
+### Interacting with the bot
+
+- Default prefix: `!`
+- Type `!help` in a channel where the bot is present to see an embedded help menu.
+
+## Commands
+
+All commands are plain text and auto-registered from the `commands` folder.
+
+- **General**
+  - `!start` — Greet/introduction
+  - `!help` — Show help menu with all commands
+- **Utility**
+  - `!remind <text> [seconds]` — Set a reminder; time defaults to 10 seconds if omitted. Example: `!remind Take a break 60`
+  - `!clear <1-100>` — Delete recent messages in bulk (Manage Messages permission required)
+  - `!serverInfo` — Show server information (owner, members, channels, created date)
+- **Profile**
+  - `!avatar [@user]` — Show the user’s profile picture
+- **Translation**
+  - `!translate <lang> <text>` — Translate text to a given language code. Example: `!translate es Hello`
+  - `!languages` — List supported language codes
+- **Moderation**
+  - `!kick @user` — Kick a member (Kick Members permission required)
+  - `!ban @user` — Ban a member (Ban Members permission required)
+  - `!mute @user` — Assign a Muted role with restricted permissions (Manage Roles required)
+  - `!unmute @user` — Remove the Muted role (Manage Roles required)
+
 ## Project Structure
 
 ```
@@ -111,6 +142,7 @@ Login Notification bot/
 │   ├── config.js         # Configuration and environment variables
 │   ├── scheduler.js      # Scheduling utilities
 │   └── utils.js          # Helper functions
+├── commands/             # Text commands auto-loaded by the bot
 ├── .env                  # Environment variables (create this)
 ├── package.json          # Dependencies and project info
 ├── startbot.bat          # Windows batch file for easy startup
@@ -123,7 +155,8 @@ Login Notification bot/
 2. **Connection**: Connects to Discord using the provided token
 3. **Login Event**: When successfully logged in, triggers the `ready` event
 4. **Notification**: Automatically sends a message to the specified channel
-5. **Status Logging**: Provides console output for monitoring
+5. **Command Handling**: Listens to messages and dispatches to matching command modules
+6. **Status Logging**: Provides console output for monitoring
 
 ## Troubleshooting
 
@@ -133,7 +166,7 @@ Login Notification bot/
 - Check that your `.env` file is in the root directory
 - Verify the `CHANNEL_ID` is correct
 - Ensure the bot has permission to send messages in the target channel
-- Check that the bot has the required intents enabled
+- Check that the bot has the required intents enabled (Guilds, Guild Messages, Message Content)
 
 **Environment variables not loading:**
 - Make sure the `.env` file is in the project root (same level as `package.json`)
@@ -144,6 +177,7 @@ Login Notification bot/
 - Ensure the bot has been invited to your server
 - Check that the bot has "Send Messages" permission in the target channel
 - Verify the bot has the required intents enabled in the Discord Developer Portal
+- For moderation commands, ensure your account and the bot both have the necessary permissions and the bot's role is high enough
 
 ### Debug Mode
 
@@ -153,7 +187,8 @@ To see more detailed logging, you can modify the bot code to add additional cons
 
 - **discord.js**: Discord API wrapper for Node.js
 - **dotenv**: Environment variable management
-- **child_process**: Process management utilities
+- **@iamtraction/google-translate**: Translation API wrapper
+- **@vitalets/google-translate-api**: Additional translation support (installed; main usage is via `@iamtraction/google-translate`)
 
 ## Contributing
 
@@ -181,3 +216,8 @@ If you encounter any issues:
 - Keep your Discord bot token secure
 - Regularly rotate your bot token if needed
 - Only give the bot the minimum permissions required
+
+## Notes
+
+- Commands are loaded from the root `commands` directory at runtime. Ensure this folder exists and contains `.js` files exporting `{ name, description, execute }`.
+- The bot sends a login message to the channel defined by `CHANNEL_ID` when it becomes ready.
