@@ -132,7 +132,7 @@ All commands are plain text and auto-registered from the `commands` folder.
   - `!mute @user` — Assign a Muted role with restricted permissions (Manage Roles required)
   - `!unmute @user` — Remove the Muted role (Manage Roles required)
   **Fun** 
-  - `!jokes @user` — Roast the user
+  - `!roast @user` — Roast the user
 
 ## Project Structure
 
